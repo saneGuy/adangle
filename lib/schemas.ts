@@ -53,6 +53,18 @@ export const GenerateResponseSchema = z.object({
   angles: z.array(AngleSchema).length(6),
 });
 
+// Relaxed schema: accepts creatives without strict char limits (badges show violations)
+const RelaxedAngleSchema = z.object({
+  name: z.string(),
+  headlines: z.array(CreativeVariantSchema).min(1).max(5),
+  bodyCopy: z.array(CreativeVariantSchema).min(1).max(5),
+  cta: z.string(),
+});
+
+export const RelaxedGenerateResponseSchema = z.object({
+  angles: z.array(RelaxedAngleSchema).min(1).max(10),
+});
+
 // --- Inferred Types ---
 
 export type ScrapeRequest = z.infer<typeof ScrapeRequestSchema>;

@@ -1,5 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { ProductBriefSchema, GenerateResponseSchema } from "./schemas";
+import { ProductBriefSchema, GenerateResponseSchema, RelaxedGenerateResponseSchema } from "./schemas";
 import type { ProductBrief, GenerateResponse } from "./schemas";
 import {
   EXTRACTION_SYSTEM_PROMPT,
@@ -88,8 +88,14 @@ export async function generateCreatives(
   const secondTry = GenerateResponseSchema.safeParse(retryRaw);
   if (secondTry.success) return secondTry.data;
 
-  // Return partial results with relaxed validation
+  // Fallback: accept with relaxed validation (no char limits, flexible array sizes)
+  // The UI char badges will show which creatives are over limit
+  const relaxedTry = RelaxedGenerateResponseSchema.safeParse(retryRaw);
+  if (relaxedTry.success) {
+    return relaxedTry.data as unknown as GenerateResponse;
+  }
+
   throw new Error(
-    `LLM output failed validation after retry: ${JSON.stringify(secondTry.error.issues.slice(0, 3))}`
+    "Could not generate valid creatives. Please try again or simplify the product brief."
   );
 }

@@ -115,13 +115,13 @@ describe("generateCreatives", () => {
     expect(mockCreate).toHaveBeenCalledTimes(2);
   });
 
-  it("throws after two validation failures", async () => {
-    const bad = { angles: [] };
+  it("throws after two validation failures with completely invalid data", async () => {
+    const bad = { notAngles: "invalid" };
     mockCreate.mockResolvedValue({
       content: [{ type: "text", text: JSON.stringify(bad) }],
     });
 
-    await expect(generateCreatives(validBrief)).rejects.toThrow("failed validation after retry");
+    await expect(generateCreatives(validBrief)).rejects.toThrow("Could not generate valid creatives");
     expect(mockCreate).toHaveBeenCalledTimes(2);
   });
 });
