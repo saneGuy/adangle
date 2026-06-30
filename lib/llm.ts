@@ -42,11 +42,11 @@ function getClient(): Anthropic {
   return new Anthropic({ apiKey });
 }
 
-export async function extractProductBrief(pageText: string): Promise<ProductBrief> {
+export async function extractProductBrief(pageText: string, model = "claude-haiku-4-5-20251001"): Promise<ProductBrief> {
   const client = getClient();
 
   const response = await client.messages.create({
-    model: "claude-sonnet-4-6",
+    model,
     max_tokens: 2048,
     system: EXTRACTION_SYSTEM_PROMPT,
     messages: [{ role: "user", content: buildExtractionUserPrompt(pageText) }],
@@ -58,7 +58,8 @@ export async function extractProductBrief(pageText: string): Promise<ProductBrie
 }
 
 export async function generateCreatives(
-  brief: ProductBrief
+  brief: ProductBrief,
+  model = "claude-haiku-4-5-20251001"
 ): Promise<GenerateResponse> {
   const client = getClient();
 
@@ -67,7 +68,7 @@ export async function generateCreatives(
       (extraInstruction ? `\n\n${extraInstruction}` : "");
 
     const response = await client.messages.create({
-      model: "claude-sonnet-4-6",
+      model,
       max_tokens: 4096,
       system: GENERATION_SYSTEM_PROMPT,
       messages: [{ role: "user", content: userPrompt }],

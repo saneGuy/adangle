@@ -19,17 +19,21 @@ export default function Home() {
   const [angles, setAngles] = useState<Angle[]>([]);
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState(false);
+  const [loadingStatus, setLoadingStatus] = useState("");
   const [scrapeError, setScrapeError] = useState(false);
+  const [model, setModel] = useState("claude-haiku-4-5-20251001");
 
   const handleAnalyze = async (url: string) => {
     setLoading(true);
+    setLoadingStatus("Fetching page...");
     setError("");
     setScrapeError(false);
     try {
+      setLoadingStatus("Scraping and extracting product info...");
       const res = await fetch("/api/scrape", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url }),
+        body: JSON.stringify({ url, model }),
       });
       const data = await res.json();
       if (data.error) {
@@ -49,12 +53,13 @@ export default function Home() {
 
   const handleGenerate = async (editedBrief: ProductBrief) => {
     setLoading(true);
+    setLoadingStatus("Generating creatives across 6 angles...");
     setError("");
     try {
       const res = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productBrief: editedBrief }),
+        body: JSON.stringify({ productBrief: editedBrief, model }),
       });
       const data = await res.json();
       if (data.error) {
@@ -106,6 +111,28 @@ export default function Home() {
           <div className="flex flex-col items-center">
             <div className="flex flex-col items-center gap-5 mb-16">
               <UrlInput onAnalyze={handleAnalyze} loading={loading} />
+              {loading && loadingStatus && (
+                <div className="flex items-center gap-2 text-sm text-blue-400">
+                  <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  </svg>
+                  {loadingStatus}
+                </div>
+              )}
+              {/* Model selector */}
+              <div className="flex items-center gap-2">
+                <label className="text-xs text-slate-500">Model:</label>
+                <select
+                  value={model}
+                  onChange={(e) => setModel(e.target.value)}
+                  className="bg-slate-800 border border-slate-600 text-slate-300 text-xs rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                >
+                  <option value="claude-haiku-4-5-20251001">Haiku 4.5 (fast)</option>
+                  <option value="claude-sonnet-4-6">Sonnet 4.6 (balanced)</option>
+                  <option value="claude-opus-4-6">Opus 4.6 (best quality)</option>
+                </select>
+              </div>
               <div className="flex items-center gap-4">
                 <button
                   onClick={() => {
