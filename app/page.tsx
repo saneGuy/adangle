@@ -7,6 +7,8 @@ import { UrlInput } from "./components/UrlInput";
 import { ProductBriefForm } from "./components/ProductBriefForm";
 import { AngleCard } from "./components/AngleCard";
 import { ExportButtons } from "./components/ExportButtons";
+import { generateTestPlan } from "@/lib/test-plan";
+import { TestPlanCard } from "./components/TestPlanCard";
 
 type Step = "input" | "brief" | "results";
 
@@ -183,6 +185,9 @@ export default function Home() {
                 <AngleCard key={angle.name} angle={angle} claims={claims} />
               ))}
             </div>
+            {angles.length > 0 && brief && (
+              <TestPlanCard plan={generateTestPlan(brief, angles)} />
+            )}
           </div>
         )}
       </div>
