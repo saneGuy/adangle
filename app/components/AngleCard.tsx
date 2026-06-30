@@ -3,6 +3,16 @@
 import type { Angle, Claim } from "@/lib/schemas";
 import { CopyButton } from "./CopyButton";
 
+function CharBadge({ text, max }: { text: string; max: number }) {
+  const len = text.length;
+  const ok = len <= max;
+  return (
+    <span className={`text-xs font-mono ${ok ? "text-green-600" : "text-red-600"}`}>
+      {len}/{max}
+    </span>
+  );
+}
+
 const ANGLE_COLORS: Record<string, string> = {
   Urgency: "border-red-400 bg-red-50",
   "Social Proof": "border-blue-400 bg-blue-50",
@@ -34,6 +44,8 @@ export function AngleCard({
             <div className="flex-1">
               <p className="text-sm font-medium">{h.text}</p>
               <span className="text-xs text-gray-400">{h.platformSlot}</span>
+              <span className="text-xs text-gray-300 mx-1">·</span>
+              <CharBadge text={h.text} max={40} />
               {h.groundedIn.length > 0 && (
                 <div className="flex gap-1 mt-0.5">
                   {h.groundedIn.map((id) => (
@@ -57,6 +69,8 @@ export function AngleCard({
             <div className="flex-1">
               <p className="text-sm">{b.text}</p>
               <span className="text-xs text-gray-400">{b.platformSlot}</span>
+              <span className="text-xs text-gray-300 mx-1">·</span>
+              <CharBadge text={b.text} max={125} />
               {b.groundedIn.length > 0 && (
                 <div className="flex gap-1 mt-0.5">
                   {b.groundedIn.map((id) => (
@@ -77,6 +91,8 @@ export function AngleCard({
         <div>
           <span className="text-xs text-gray-500 uppercase">CTA: </span>
           <span className="text-sm font-semibold">{angle.cta}</span>
+          <span className="text-xs text-gray-300 mx-1">·</span>
+          <CharBadge text={angle.cta} max={25} />
         </div>
         <CopyButton text={angle.cta} />
       </div>
