@@ -200,30 +200,20 @@ export default function Home() {
         {/* Step 3: Results */}
         {step === "results" && (
           <div>
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
-              <div>
-                <h2 className="text-2xl font-bold text-white">
-                  Creatives for {brief?.productName}
-                </h2>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-white">
+                Creatives for {brief?.productName}
                 {claims.length > 0 && (
-                  <div className="flex gap-2 mt-2 flex-wrap">
-                    {claims.map((c) => (
-                      <span
-                        key={c.id}
-                        className="text-xs bg-slate-700 text-slate-300 px-2 py-1 rounded"
-                        title={c.text}
-                      >
-                        {c.id}: {c.text}
-                      </span>
-                    ))}
-                  </div>
+                  <span className="text-sm font-normal text-slate-500 ml-2">
+                    ({claims.length} source claims)
+                  </span>
                 )}
-              </div>
-              <div className="flex gap-3 items-center">
+              </h2>
+              <div className="flex gap-2 items-center">
                 <ExportButtons angles={angles} />
                 <button
                   onClick={handleReset}
-                  className="px-4 py-2 border border-slate-600 text-slate-300 rounded-lg text-sm hover:bg-slate-800 transition-colors"
+                  className="px-3 py-2 border border-slate-600 text-slate-300 rounded-lg text-xs hover:bg-slate-800 transition-colors"
                 >
                   New Analysis
                 </button>
