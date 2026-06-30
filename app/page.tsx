@@ -9,6 +9,7 @@ import { AngleCard } from "./components/AngleCard";
 import { ExportButtons } from "./components/ExportButtons";
 import { generateTestPlan } from "@/lib/test-plan";
 import { TestPlanCard } from "./components/TestPlanCard";
+import { AdPreviewSection } from "./components/AdPreview";
 
 type Step = "input" | "brief" | "results";
 
@@ -187,6 +188,9 @@ export default function Home() {
             </div>
             {angles.length > 0 && brief && (
               <TestPlanCard plan={generateTestPlan(brief, angles)} />
+            )}
+            {angles.length > 0 && brief && (
+              <AdPreviewSection angles={angles} productName={brief.productName} />
             )}
           </div>
         )}
