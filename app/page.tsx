@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import type { ProductBrief, Angle, Claim } from "@/lib/schemas";
 import { DEMO_BRIEF, DEMO_ANGLES } from "@/lib/demo-data";
 import { UrlInput } from "./components/UrlInput";
@@ -12,6 +12,9 @@ import { TestPlanCard } from "./components/TestPlanCard";
 import { AdPreviewSection } from "./components/AdPreview";
 import { scoreCreatives } from "@/lib/shortlist";
 import { ShortlistCard } from "./components/ShortlistCard";
+import { type AdAngleProject } from "@/lib/db";
+import { saveProject, loadProject, getLastProjectId, createNewProject } from "@/lib/project-store";
+import { ProjectSidebar } from "./components/ProjectSidebar";
 
 type Step = "input" | "brief" | "results";
 
@@ -25,9 +28,17 @@ export default function Home() {
   const [scrapeError, setScrapeError] = useState(false);
   const [extractModel, setExtractModel] = useState("claude-haiku-4-5-20251001");
   const [generateModel, setGenerateModel] = useState("gpt-4o");
+  const [currentProjectId, setCurrentProjectId] = useState<string | null>(null);
+  const [saveStatus, setSaveStatus] = useState<"saved" | "saving" | "error" | "">("");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const isRestored = useRef(false);
 
   const handleAnalyze = async (url: string) => {
     setLoading(true);
+    if (!currentProjectId) {
+      const newProject = createNewProject();
+      setCurrentProjectId(newProject.id);
+    }
     setLoadingStatus("Fetching page...");
     setError("");
     setScrapeError(false);
@@ -56,6 +67,10 @@ export default function Home() {
 
   const handleGenerate = async (editedBrief: ProductBrief) => {
     setLoading(true);
+    if (!currentProjectId) {
+      const newProject = createNewProject();
+      setCurrentProjectId(newProject.id);
+    }
     setLoadingStatus("Generating creatives across 6 angles...");
     setError("");
     try {
@@ -85,21 +100,113 @@ export default function Home() {
     setAngles([]);
     setError("");
     setScrapeError(false);
+    setCurrentProjectId(null);
+    setSaveStatus("");
   };
+
+  const handleLoadProject = (project: AdAngleProject) => {
+    setCurrentProjectId(project.id);
+    setBrief(project.brief || undefined);
+    setAngles(project.angles);
+    setExtractModel(project.extractModel);
+    setGenerateModel(project.generateModel);
+    setStep(project.step);
+    setError("");
+    setScrapeError(false);
+    isRestored.current = true;
+  };
+
+  const handleNewProject = () => {
+    handleReset();
+    const newProject = createNewProject();
+    setCurrentProjectId(newProject.id);
+  };
+
+  // Autosave
+  const doSave = useCallback(async () => {
+    if (!isRestored.current || !currentProjectId) return;
+    setSaveStatus("saving");
+    try {
+      await saveProject({
+        id: currentProjectId,
+        name: brief?.productName || "Untitled Project",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        brief: brief || null,
+        angles,
+        extractModel,
+        generateModel,
+        step,
+        schemaVersion: 1,
+      });
+      setSaveStatus("saved");
+    } catch {
+      setSaveStatus("error");
+    }
+  }, [currentProjectId, brief, angles, extractModel, generateModel, step]);
+
+  useEffect(() => {
+    if (!isRestored.current) return;
+    const timer = setTimeout(doSave, 750);
+    return () => clearTimeout(timer);
+  }, [doSave]);
+
+  // Restore last project on mount
+  useEffect(() => {
+    const restore = async () => {
+      const lastId = getLastProjectId();
+      if (lastId) {
+        const project = await loadProject(lastId);
+        if (project) {
+          setCurrentProjectId(project.id);
+          setBrief(project.brief || undefined);
+          setAngles(project.angles);
+          setExtractModel(project.extractModel);
+          setGenerateModel(project.generateModel);
+          setStep(project.step);
+        }
+      }
+      isRestored.current = true;
+    };
+    restore();
+  }, []);
 
   const claims: Claim[] = brief?.claims || [];
 
   return (
     <main className="min-h-screen bg-slate-900">
+      <ProjectSidebar
+        open={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        currentProjectId={currentProjectId}
+        onLoadProject={handleLoadProject}
+        onNewProject={handleNewProject}
+      />
       <div className="max-w-6xl mx-auto px-4 py-12">
         {/* Header */}
-        <div className="text-center mb-10">
-          <h1 className="text-4xl font-extrabold text-white mb-3 tracking-tight">
-            Ad<span className="text-blue-400">Angle</span>
-          </h1>
-          <p className="text-slate-300 text-lg">
-            Paste a product URL. Get ad creatives across 6 psychological angles.
-          </p>
+        <div className="flex items-center justify-between mb-10">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="p-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-800"
+            title="Projects"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+            </svg>
+          </button>
+          <div className="text-center flex-1">
+            <h1 className="text-4xl font-extrabold text-white mb-3 tracking-tight">
+              Ad<span className="text-blue-400">Angle</span>
+            </h1>
+            <p className="text-slate-300 text-lg">
+              Paste a product URL. Get ad creatives across 6 psychological angles.
+            </p>
+          </div>
+          <div className="w-9 flex justify-end">
+            {saveStatus === "saving" && <span className="text-xs text-slate-500">Saving...</span>}
+            {saveStatus === "saved" && <span className="text-xs text-green-500">Saved</span>}
+            {saveStatus === "error" && <span className="text-xs text-red-500">Save failed</span>}
+          </div>
         </div>
 
         {/* Error Banner */}
