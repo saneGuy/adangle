@@ -274,6 +274,8 @@ export default function Home() {
               <div className="flex items-center gap-4">
                 <button
                   onClick={() => {
+                    const newProject = createNewProject("Acme Analytics (Demo)");
+                    setCurrentProjectId(newProject.id);
                     setBrief(DEMO_BRIEF);
                     setAngles(DEMO_ANGLES);
                     setStep("results");
