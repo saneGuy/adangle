@@ -7,20 +7,22 @@ function CharBadge({ text, max }: { text: string; max: number }) {
   const len = text.length;
   const ok = len <= max;
   return (
-    <span className={`text-xs font-mono ${ok ? "text-green-600" : "text-red-600"}`}>
+    <span className={`text-xs font-mono ${ok ? "text-green-400" : "text-red-400"}`}>
       {len}/{max}
     </span>
   );
 }
 
-const ANGLE_COLORS: Record<string, string> = {
-  Urgency: "border-red-400 bg-red-50",
-  "Social Proof": "border-blue-400 bg-blue-50",
-  Curiosity: "border-purple-400 bg-purple-50",
-  "Pain/Solution": "border-orange-400 bg-orange-50",
-  Authority: "border-green-400 bg-green-50",
-  FOMO: "border-yellow-400 bg-yellow-50",
+const ANGLE_COLORS: Record<string, { border: string; accent: string; badge: string }> = {
+  Urgency: { border: "border-red-500/60", accent: "text-red-400", badge: "bg-red-500/20" },
+  "Social Proof": { border: "border-blue-500/60", accent: "text-blue-400", badge: "bg-blue-500/20" },
+  Curiosity: { border: "border-purple-500/60", accent: "text-purple-400", badge: "bg-purple-500/20" },
+  "Pain/Solution": { border: "border-orange-500/60", accent: "text-orange-400", badge: "bg-orange-500/20" },
+  Authority: { border: "border-emerald-500/60", accent: "text-emerald-400", badge: "bg-emerald-500/20" },
+  FOMO: { border: "border-yellow-500/60", accent: "text-yellow-400", badge: "bg-yellow-500/20" },
 };
+
+const DEFAULT_COLORS = { border: "border-slate-600", accent: "text-slate-400", badge: "bg-slate-700" };
 
 export function AngleCard({
   angle,
@@ -29,27 +31,29 @@ export function AngleCard({
   angle: Angle;
   claims: Claim[];
 }) {
-  const colorClass = ANGLE_COLORS[angle.name] || "border-gray-400 bg-gray-50";
+  const colors = ANGLE_COLORS[angle.name] || DEFAULT_COLORS;
   const claimMap = Object.fromEntries(claims.map((c) => [c.id, c.text]));
 
   return (
-    <div className={`border-2 rounded-lg p-4 ${colorClass}`}>
-      <h3 className="text-lg font-bold mb-3">{angle.name}</h3>
+    <div className={`border ${colors.border} bg-slate-800/80 rounded-xl p-5`}>
+      <h3 className={`text-lg font-bold mb-4 ${colors.accent}`}>{angle.name}</h3>
 
       {/* Headlines */}
-      <div className="mb-3">
-        <h4 className="text-xs font-semibold text-gray-500 uppercase mb-1">Headlines</h4>
+      <div className="mb-4">
+        <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Headlines</h4>
         {angle.headlines.map((h, i) => (
-          <div key={i} className="flex items-start justify-between gap-2 mb-1">
+          <div key={i} className="flex items-start justify-between gap-2 mb-2">
             <div className="flex-1">
-              <p className="text-sm font-medium">{h.text}</p>
-              <span className="text-xs text-gray-400">{h.platformSlot}</span>
-              <span className="text-xs text-gray-300 mx-1">·</span>
-              <CharBadge text={h.text} max={40} />
+              <p className="text-sm font-medium text-white">{h.text}</p>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <span className="text-xs text-slate-500">{h.platformSlot}</span>
+                <span className="text-xs text-slate-600">·</span>
+                <CharBadge text={h.text} max={40} />
+              </div>
               {h.groundedIn.length > 0 && (
-                <div className="flex gap-1 mt-0.5">
+                <div className="flex gap-1 mt-1">
                   {h.groundedIn.map((id) => (
-                    <span key={id} className="text-xs bg-white/60 px-1 rounded" title={claimMap[id]}>
+                    <span key={id} className={`text-xs ${colors.badge} ${colors.accent} px-1.5 py-0.5 rounded`} title={claimMap[id]}>
                       {id}
                     </span>
                   ))}
@@ -62,19 +66,21 @@ export function AngleCard({
       </div>
 
       {/* Body Copy */}
-      <div className="mb-3">
-        <h4 className="text-xs font-semibold text-gray-500 uppercase mb-1">Body Copy</h4>
+      <div className="mb-4">
+        <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Body Copy</h4>
         {angle.bodyCopy.map((b, i) => (
-          <div key={i} className="flex items-start justify-between gap-2 mb-2">
+          <div key={i} className="flex items-start justify-between gap-2 mb-3">
             <div className="flex-1">
-              <p className="text-sm">{b.text}</p>
-              <span className="text-xs text-gray-400">{b.platformSlot}</span>
-              <span className="text-xs text-gray-300 mx-1">·</span>
-              <CharBadge text={b.text} max={125} />
+              <p className="text-sm text-slate-200">{b.text}</p>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <span className="text-xs text-slate-500">{b.platformSlot}</span>
+                <span className="text-xs text-slate-600">·</span>
+                <CharBadge text={b.text} max={125} />
+              </div>
               {b.groundedIn.length > 0 && (
-                <div className="flex gap-1 mt-0.5">
+                <div className="flex gap-1 mt-1">
                   {b.groundedIn.map((id) => (
-                    <span key={id} className="text-xs bg-white/60 px-1 rounded" title={claimMap[id]}>
+                    <span key={id} className={`text-xs ${colors.badge} ${colors.accent} px-1.5 py-0.5 rounded`} title={claimMap[id]}>
                       {id}
                     </span>
                   ))}
@@ -87,11 +93,11 @@ export function AngleCard({
       </div>
 
       {/* CTA */}
-      <div className="flex items-center justify-between border-t pt-2">
-        <div>
-          <span className="text-xs text-gray-500 uppercase">CTA: </span>
-          <span className="text-sm font-semibold">{angle.cta}</span>
-          <span className="text-xs text-gray-300 mx-1">·</span>
+      <div className="flex items-center justify-between border-t border-slate-700 pt-3">
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-slate-500 uppercase">CTA:</span>
+          <span className="text-sm font-semibold text-white">{angle.cta}</span>
+          <span className="text-xs text-slate-600">·</span>
           <CharBadge text={angle.cta} max={25} />
         </div>
         <CopyButton text={angle.cta} />

@@ -50,75 +50,79 @@ export function ProductBriefForm({
     });
   };
 
+  const inputClass = "w-full px-3 py-2.5 bg-slate-800 border border-slate-600 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent";
+
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-2xl space-y-4">
-      <h2 className="text-lg font-semibold">Product Brief</h2>
-      <p className="text-sm text-gray-500">Review and edit the extracted information before generating creatives.</p>
+    <form onSubmit={handleSubmit} className="w-full max-w-2xl space-y-5 bg-slate-800/50 border border-slate-700 rounded-xl p-6">
+      <div>
+        <h2 className="text-xl font-bold text-white">Product Brief</h2>
+        <p className="text-sm text-slate-400 mt-1">Review and edit the extracted information before generating creatives.</p>
+      </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">
-          Product Name <span className="text-red-500">*</span>
+        <label className="block text-sm font-medium text-slate-200 mb-1.5">
+          Product Name <span className="text-red-400">*</span>
         </label>
         <input
           value={productName}
           onChange={(e) => setProductName(e.target.value)}
-          className="w-full px-3 py-2 border rounded text-sm"
+          className={inputClass}
           required
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">
-          Description <span className="text-red-500">*</span>
+        <label className="block text-sm font-medium text-slate-200 mb-1.5">
+          Description <span className="text-red-400">*</span>
         </label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="w-full px-3 py-2 border rounded text-sm"
-          rows={2}
+          className={inputClass}
+          rows={3}
           required
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Features (one per line)</label>
+        <label className="block text-sm font-medium text-slate-200 mb-1.5">Features (one per line)</label>
         <textarea
           value={features}
           onChange={(e) => setFeatures(e.target.value)}
-          className="w-full px-3 py-2 border rounded text-sm"
-          rows={3}
+          className={inputClass}
+          rows={4}
           placeholder={"Fast processing\nEasy integration\n24/7 support"}
         />
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium mb-1">Pricing</label>
+          <label className="block text-sm font-medium text-slate-200 mb-1.5">Pricing</label>
           <input
             value={pricing}
             onChange={(e) => setPricing(e.target.value)}
-            className="w-full px-3 py-2 border rounded text-sm"
+            className={inputClass}
             placeholder="$49/month"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Target Audience</label>
+          <label className="block text-sm font-medium text-slate-200 mb-1.5">Target Audience</label>
           <input
             value={targetAudience}
             onChange={(e) => setTargetAudience(e.target.value)}
-            className="w-full px-3 py-2 border rounded text-sm"
+            className={inputClass}
             placeholder="Small business owners"
           />
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Claims (one per line)</label>
+        <label className="block text-sm font-medium text-slate-200 mb-1.5">Claims (one per line)</label>
         <textarea
           value={claimsText}
           onChange={(e) => setClaimsText(e.target.value)}
-          className="w-full px-3 py-2 border rounded text-sm"
-          rows={3}
+          className={inputClass}
+          rows={4}
           placeholder={"Saves 10 hours per week\nUsed by 5000+ companies\n99.9% uptime"}
         />
       </div>
@@ -126,7 +130,7 @@ export function ProductBriefForm({
       <button
         type="submit"
         disabled={loading || !productName.trim() || !description.trim()}
-        className="w-full py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
         {loading ? "Generating Creatives..." : "Generate Creatives"}
       </button>

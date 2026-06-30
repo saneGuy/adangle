@@ -15,18 +15,18 @@ function downloadFile(content: string, filename: string, mimeType: string) {
 
 export function ExportButtons({ angles }: { angles: Angle[] }) {
   return (
-    <div className="flex gap-3">
+    <div className="flex gap-2">
       <button
         onClick={() => downloadFile(anglesToCsv(angles), "adangle-creatives.csv", "text/csv")}
-        className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm font-medium"
+        className="px-3 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-500 text-sm font-medium transition-colors"
       >
-        Download CSV
+        CSV
       </button>
       <button
         onClick={() => downloadFile(anglesToJson(angles), "adangle-creatives.json", "application/json")}
-        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm font-medium"
+        className="px-3 py-2 bg-slate-700 text-slate-200 rounded-lg hover:bg-slate-600 text-sm font-medium transition-colors"
       >
-        Download JSON
+        JSON
       </button>
     </div>
   );
