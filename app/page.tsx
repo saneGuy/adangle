@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { ProductBrief, Angle, Claim } from "@/lib/schemas";
+import { DEMO_BRIEF, DEMO_ANGLES } from "@/lib/demo-data";
 import { UrlInput } from "./components/UrlInput";
 import { ProductBriefForm } from "./components/ProductBriefForm";
 import { AngleCard } from "./components/AngleCard";
@@ -99,6 +100,16 @@ export default function Home() {
         {step === "input" && (
           <div className="flex flex-col items-center gap-4">
             <UrlInput onAnalyze={handleAnalyze} loading={loading} />
+            <button
+              onClick={() => {
+                setBrief(DEMO_BRIEF);
+                setAngles(DEMO_ANGLES);
+                setStep("results");
+              }}
+              className="px-6 py-3 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 text-sm"
+            >
+              Try Demo
+            </button>
             <button
               onClick={() => setStep("brief")}
               className="text-sm text-gray-500 underline hover:text-gray-700"
