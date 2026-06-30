@@ -21,7 +21,8 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [loadingStatus, setLoadingStatus] = useState("");
   const [scrapeError, setScrapeError] = useState(false);
-  const [model, setModel] = useState("claude-haiku-4-5-20251001");
+  const [extractModel, setExtractModel] = useState("claude-haiku-4-5-20251001");
+  const [generateModel, setGenerateModel] = useState("gpt-4o");
 
   const handleAnalyze = async (url: string) => {
     setLoading(true);
@@ -33,7 +34,7 @@ export default function Home() {
       const res = await fetch("/api/scrape", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url, model }),
+        body: JSON.stringify({ url, model: extractModel }),
       });
       const data = await res.json();
       if (data.error) {
@@ -59,7 +60,7 @@ export default function Home() {
       const res = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productBrief: editedBrief, model }),
+        body: JSON.stringify({ productBrief: editedBrief, model: generateModel }),
       });
       const data = await res.json();
       if (data.error) {
@@ -120,18 +121,46 @@ export default function Home() {
                   {loadingStatus}
                 </div>
               )}
-              {/* Model selector */}
-              <div className="flex items-center gap-2">
-                <label className="text-xs text-slate-500">Model:</label>
-                <select
-                  value={model}
-                  onChange={(e) => setModel(e.target.value)}
-                  className="bg-slate-800 border border-slate-600 text-slate-300 text-xs rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                >
-                  <option value="claude-haiku-4-5-20251001">Haiku 4.5 (fast)</option>
-                  <option value="claude-sonnet-4-6">Sonnet 4.6 (balanced)</option>
-                  <option value="claude-opus-4-6">Opus 4.6 (best quality)</option>
-                </select>
+              {/* Model selectors */}
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-1.5">
+                  <label className="text-xs text-slate-500">Extract:</label>
+                  <select
+                    value={extractModel}
+                    onChange={(e) => setExtractModel(e.target.value)}
+                    className="bg-slate-800 border border-slate-600 text-slate-300 text-xs rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  >
+                    <optgroup label="Claude">
+                      <option value="claude-haiku-4-5-20251001">Haiku 4.5 (fast)</option>
+                      <option value="claude-sonnet-4-6">Sonnet 4.6</option>
+                      <option value="claude-opus-4-6">Opus 4.6</option>
+                    </optgroup>
+                    <optgroup label="OpenAI">
+                      <option value="gpt-4o-mini">GPT-4o Mini (fast)</option>
+                      <option value="gpt-4o">GPT-4o</option>
+                      <option value="o3-mini">o3-mini</option>
+                    </optgroup>
+                  </select>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <label className="text-xs text-slate-500">Generate:</label>
+                  <select
+                    value={generateModel}
+                    onChange={(e) => setGenerateModel(e.target.value)}
+                    className="bg-slate-800 border border-slate-600 text-slate-300 text-xs rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  >
+                    <optgroup label="Claude">
+                      <option value="claude-haiku-4-5-20251001">Haiku 4.5 (fast)</option>
+                      <option value="claude-sonnet-4-6">Sonnet 4.6</option>
+                      <option value="claude-opus-4-6">Opus 4.6</option>
+                    </optgroup>
+                    <optgroup label="OpenAI">
+                      <option value="gpt-4o-mini">GPT-4o Mini (fast)</option>
+                      <option value="gpt-4o">GPT-4o</option>
+                      <option value="o3-mini">o3-mini</option>
+                    </optgroup>
+                  </select>
+                </div>
               </div>
               <div className="flex items-center gap-4">
                 <button
