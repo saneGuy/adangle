@@ -66,6 +66,7 @@ export function importProject(json: string): AdAngleProject {
     angles: validated.angles,
     extractModel: validated.extractModel,
     generateModel: validated.generateModel,
+    brandKit: null,
     step: validated.step,
     schemaVersion: 1,
   };
@@ -81,6 +82,7 @@ export function createNewProject(name = "Untitled Project"): AdAngleProject {
     angles: [],
     extractModel: "claude-haiku-4-5-20251001",
     generateModel: "gpt-4o",
+    brandKit: null,
     step: "input",
     schemaVersion: 1,
   };

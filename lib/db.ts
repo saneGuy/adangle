@@ -1,5 +1,6 @@
 import Dexie, { type EntityTable } from "dexie";
 import type { ProductBrief, Angle } from "./schemas";
+import type { BrandKit } from "./brand-kit";
 
 export interface AdAngleProject {
   id: string;
@@ -10,6 +11,7 @@ export interface AdAngleProject {
   angles: Angle[];
   extractModel: string;
   generateModel: string;
+  brandKit: BrandKit | null;
   step: "input" | "brief" | "results";
   schemaVersion: number;
 }
