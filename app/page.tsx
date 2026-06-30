@@ -103,25 +103,47 @@ export default function Home() {
 
         {/* Step 1: URL Input */}
         {step === "input" && (
-          <div className="flex flex-col items-center gap-5">
-            <UrlInput onAnalyze={handleAnalyze} loading={loading} />
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => {
-                  setBrief(DEMO_BRIEF);
-                  setAngles(DEMO_ANGLES);
-                  setStep("results");
-                }}
-                className="px-5 py-2.5 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-500 text-sm transition-colors"
-              >
-                Try Demo
-              </button>
-              <button
-                onClick={() => setStep("brief")}
-                className="text-sm text-slate-400 underline hover:text-slate-200 transition-colors"
-              >
-                Or enter manually
-              </button>
+          <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center gap-5 mb-16">
+              <UrlInput onAnalyze={handleAnalyze} loading={loading} />
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => {
+                    setBrief(DEMO_BRIEF);
+                    setAngles(DEMO_ANGLES);
+                    setStep("results");
+                  }}
+                  className="px-5 py-2.5 border border-blue-500 text-blue-400 rounded-lg font-medium hover:bg-blue-500/10 text-sm transition-colors"
+                >
+                  Try Demo
+                </button>
+                <button
+                  onClick={() => setStep("brief")}
+                  className="text-sm text-slate-400 underline hover:text-slate-200 transition-colors"
+                >
+                  Or enter manually
+                </button>
+              </div>
+            </div>
+
+            {/* How it works */}
+            <div className="w-full max-w-4xl">
+              <h2 className="text-center text-sm font-semibold text-slate-500 uppercase tracking-widest mb-8">How it works</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {[
+                  { step: "1", title: "Paste a URL", desc: "Drop any product or landing page URL. We scrape and extract claims, features, and audience." },
+                  { step: "2", title: "Generate creatives", desc: "AI creates 30 ad variants across 6 psychological angles with platform-ready formatting." },
+                  { step: "3", title: "Launch with a plan", desc: "Get a test plan with campaign structure, KPIs, and 7-day decision rules. Export as CSV." },
+                ].map((item) => (
+                  <div key={item.step} className="text-center">
+                    <div className="w-10 h-10 rounded-full border-2 border-blue-500/50 text-blue-400 flex items-center justify-center mx-auto mb-3 text-sm font-bold">
+                      {item.step}
+                    </div>
+                    <h3 className="text-white font-semibold mb-1">{item.title}</h3>
+                    <p className="text-slate-400 text-sm leading-relaxed">{item.desc}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}
@@ -195,6 +217,13 @@ export default function Home() {
           </div>
         )}
       </div>
+
+      {/* Footer */}
+      <footer className="border-t border-slate-800 mt-16 py-6 text-center">
+        <p className="text-slate-500 text-xs">
+          Built for the It's Today Media Build Challenge. Powered by Claude API.
+        </p>
+      </footer>
     </main>
   );
 }
