@@ -10,6 +10,8 @@ import { ExportButtons } from "./components/ExportButtons";
 import { generateTestPlan } from "@/lib/test-plan";
 import { TestPlanCard } from "./components/TestPlanCard";
 import { AdPreviewSection } from "./components/AdPreview";
+import { scoreCreatives } from "@/lib/shortlist";
+import { ShortlistCard } from "./components/ShortlistCard";
 
 type Step = "input" | "brief" | "results";
 
@@ -254,6 +256,9 @@ export default function Home() {
                 <AngleCard key={angle.name} angle={angle} claims={claims} />
               ))}
             </div>
+            {angles.length > 0 && brief && (
+              <ShortlistCard scored={scoreCreatives(angles, brief)} />
+            )}
             {angles.length > 0 && brief && (
               <TestPlanCard plan={generateTestPlan(brief, angles)} />
             )}
