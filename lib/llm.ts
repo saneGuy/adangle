@@ -46,7 +46,7 @@ export async function extractProductBrief(pageText: string): Promise<ProductBrie
   const client = getClient();
 
   const response = await client.messages.create({
-    model: "claude-sonnet-4-20250514",
+    model: "claude-sonnet-4-6",
     max_tokens: 2048,
     system: EXTRACTION_SYSTEM_PROMPT,
     messages: [{ role: "user", content: buildExtractionUserPrompt(pageText) }],
@@ -67,7 +67,7 @@ export async function generateCreatives(
       (extraInstruction ? `\n\n${extraInstruction}` : "");
 
     const response = await client.messages.create({
-      model: "claude-sonnet-4-20250514",
+      model: "claude-sonnet-4-6",
       max_tokens: 4096,
       system: GENERATION_SYSTEM_PROMPT,
       messages: [{ role: "user", content: userPrompt }],
